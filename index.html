@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorenz Simulation</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        .row { display: flex; justify-content: center; align-items: center;}
+        .col { margin: 10px; }
+    </style>
+</head>
+<body>
+    <canvas id="boidsCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('boidsCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const SIGMA = 10;
+        const RHO = 28;
+        const BETA = 8/3;
+
+        const dt = 0.01;
+        const scale = 10;
+
+        const point1 = {x:1, y:0, z:0};
+        const point2 = {x:2, y:0, z:0};
+        const offset = {x:0, y:0, z: -250};
+
+        function lorenz(point) {
+            const dx = SIGMA * (point.y - point.x);
+            const dy = point.x * (RHO - point.z) - point.y;
+            const dz = point.x * point.y - BETA * point.z;
+            return {x: dx, y: dy, z: dz};
+        }
+
+        function drawStep(point, color = 'red') {
+            //ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.moveTo((point.x * scale + canvas.width / 2) + offset.x, (point.z * scale + canvas.height / 2) + offset.z);
+            const delta = lorenz(point);
+            point.x += delta.x * dt;
+            point.y += delta.y * dt;
+            point.z += delta.z * dt;
+            ctx.lineTo((point.x * scale + canvas.width / 2) + offset.x, (point.z * scale + canvas.height / 2) + offset.z);
+            ctx.stroke();
+        }
+
+        //drawStep();
+
+        function animate() {
+            drawStep(point1, 'red');
+            drawStep(point2, 'green');
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+
+
+    </script>
+</body>
+</html>
